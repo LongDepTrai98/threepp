@@ -179,9 +179,19 @@ void gl::GLTextures::uploadTexture(TextureProperties* textureProperties, Texture
         } else {
 
             if (glType == GL_UNSIGNED_BYTE) {
+                //texture.image().data().data()
+                uchar* dataPtr{nullptr}; 
+                if (!image.isUsePtr)
+                {
+                    dataPtr = texture.image().data().data(); 
+                }
+                else
+                {
+                    dataPtr = image.getPtr(); 
+                }
                 state->texImage2D(GL_TEXTURE_2D, 0, glInternalFormat,
                                   static_cast<int>(image.width), static_cast<int>(image.height),
-                                  glFormat, glType, texture.image().data().data());
+                                  glFormat, glType, dataPtr);
             } else if (glType == GL_FLOAT) {
                 state->texImage2D(GL_TEXTURE_2D, 0, glInternalFormat,
                                   static_cast<int>(image.width), static_cast<int>(image.height),

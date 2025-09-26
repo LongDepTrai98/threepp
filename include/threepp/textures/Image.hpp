@@ -5,10 +5,9 @@
 #include <utility>
 #include <variant>
 #include <vector>
-
 namespace threepp {
-
-    typedef std::variant<std::vector<unsigned char>, std::vector<float>> ImageData;
+    typedef unsigned char uchar;
+    typedef std::variant<std::vector<unsigned char>, std::vector<float>, uchar*> ImageData;
 
     class Image {
 
@@ -18,10 +17,13 @@ namespace threepp {
         unsigned int depth;
 
         Image(ImageData data, unsigned int width, unsigned int height)
-            : width(width), height(height), depth(0), data_(std::move(data)){};
+            : width(width), height(height), depth(0), data_(std::move(data)) {};
+
+        Image(uchar* data, unsigned int width, unsigned int height)
+            : width(width), height(height), depth(0), data_(data), isUsePtr(true) {};
 
         Image(ImageData data, unsigned int width, unsigned int height, unsigned int depth)
-            : width(width), height(height), depth(depth), data_(std::move(data)){};
+            : width(width), height(height), depth(depth), data_(std::move(data)) {};
 
         void setData(ImageData data) {
 
@@ -33,6 +35,14 @@ namespace threepp {
 
             return std::get<std::vector<T>>(data_);
         }
+
+        template<class T = unsigned char>
+        uchar* getPtr() {
+            return std::get<T*>(data_);
+        }
+
+    public:
+        bool isUsePtr{false};
 
     private:
         ImageData data_;
